@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Autocomplete</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <style>
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="searchBox" placeholder="Start typing...">
+
+    <script>
+        $(function() {
+            $("#searchBox").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "http://localhost:8000/autocomplete/",
+                        dataType: "json",
+                        data: {
+                            query: request.term
+                        },
+                        success: function(data) {
+                            response(data.map(function(item) {
+                                return {
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error:", error);
+                            console.log("Response:", xhr.responseText);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    console.log("Selected: " + ui.item.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
