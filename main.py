@@ -22,11 +22,11 @@ app.add_middleware(
 
 # OpenSearch client configuration
 client = OpenSearch(
-    hosts = [{'host': 'localhost', 'port': 9200}],
-    use_ssl = False,
-    verify_certs = False,
-    ssl_assert_hostname = False,
-    ssl_show_warn = False
+    hosts=[{'host': 'localhost', 'port': 9200}],
+    use_ssl=False,
+    verify_certs=False,
+    ssl_assert_hostname=False,
+    ssl_show_warn=False
 )
 
 index_name = "autocomplete"
@@ -38,21 +38,20 @@ class Suggestion(BaseModel):
 async def autocomplete(query: str):
     try:
         logger.info(f"Received autocomplete request for query: {query}")
-        response = client.search(
-            index=index_name,
-            body={
-                "size": 5,
-                "query": {
-                    "match_phrase_prefix": {
-                        "name": {
-                            "query": query,
-                            "max_expansions": 10
-                        }
+        body = {
+            "size": 5,
+            "query": {
+                "match_phrase_prefix": {
+                    "name": {
+                        "query": query,
+                        "max_expansions": 10
                     }
-                },
-                "_source": ["name"]
-            }
-        )
+                }
+            },
+            "_source": ["name"]
+        }
+        response = client.search(index=index_name, body=body)
+        logger.debug(f"Search response: {response}")  # Log the raw response for debugging
         hits = response['hits']['hits']
         suggestions = [Suggestion(name=hit["_source"]["name"]) for hit in hits]
         logger.info(f"Returning {len(suggestions)} suggestions")

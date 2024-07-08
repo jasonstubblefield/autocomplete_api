@@ -9,7 +9,28 @@
         .ui-autocomplete {
             max-height: 200px;
             overflow-y: auto;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Ensure no horizontal scrollbar */
+            width: 400px; /* Adjust the width as needed */
+        }
+        .ui-menu-item-wrapper {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            display: block; /* Ensure the wrapper is a block element */
+        }
+        .ui-menu-item-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px; /* Adjust the width as needed */
+            height: 100%;
+            background: linear-gradient(to left, white, rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+        .ui-menu-item {
+            overflow: hidden; /* Ensure no overflow */
         }
     </style>
 </head>
@@ -44,7 +65,11 @@
                 select: function(event, ui) {
                     console.log("Selected: " + ui.item.value);
                 }
-            });
+            }).data("ui-autocomplete")._renderItem = function(ul, item) {
+                return $("<li>")
+                    .append("<div class='ui-menu-item-wrapper'>" + item.label + "</div>")
+                    .appendTo(ul);
+            };
         });
     </script>
 </body>
