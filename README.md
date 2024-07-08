@@ -4,6 +4,10 @@ This is a starting point for creating an auto complete / suggest dropdown with F
 
 Make sure you have opensearch installed and running.
 
+Create a virtual environment.
+
+`python -m venv venv`
+
 Enable the venv.
 
 `source venv/bin/activate`
